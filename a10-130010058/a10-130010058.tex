@@ -1,0 +1,961 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[affil-it]{authblk}
+\usepackage{etoolbox}
+\usepackage{lmodern}
+\usepackage{titlesec}
+\usepackage{float}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+\makeatletter
+\patchcmd{\@maketitle}{\LARGE \@title}{\fontsize{20}{19.2}\selectfont\@title}{}{}
+\makeatother
+
+\renewcommand\Authfont{\fontsize{16}{14.4}\selectfont}
+\renewcommand\Affilfont{\fontsize{12}{10.8}\itshape}
+
+\title{\textbf{Assignment 10}}
+\author{Vikas Kurapati - 130010058}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+ 
+\lstset{style=mystyle}
+
+\begin{document}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+\section{Introduction}
+In this assignment, PySPH was used to simulate the evolution of taylor green vortex in the domain of $0 \leq x, y \leq 1$ for a simulation time of 2 seconds and Reynolds Number 100. PySPH parameters changed were kernel, hdx and nx(nx was changed to change the value of $dx = \frac{L}{nx}$) where L = 1.0.\\
+The parameters used are:
+\begin{itemize}
+ \item Kernels:
+ \begin{itemize}
+  \item Cubic Spline Kernel
+  \item Gaussian Kernel
+  \item Quintic Spline Kernel
+  \item WendlandQuintic Spline Kernel
+ \end{itemize}
+\item hdx:
+\begin{itemize}
+ \item 0.5
+ \item 1.0
+ \item 2.0
+\end{itemize}
+\item nx:
+\begin{itemize}
+ \item 25
+ \item 50
+ \item 100
+\end{itemize}
+\end{itemize}
+The above all parameters were changed in every combination which gave 36 cases to run and the pressure solution, velocity solution at t=2.0s is compared with the exact solution. Also, the plots from PySPH are shown here.
+\section{Theoretical Solution}
+Taylor Green vortex has an analytical solution available for a domain of $0 \leq x, y \leq 2\pi$ which are scaled down here to our domain.\cite{wiki}\\
+\begin{lstlisting}[language=Python, caption=Function which returns Theoretical Solution]
+import numpy as np
+ 
+def P_exact(x, y):
+    decay_rate = -8.0*np.pi*np.pi/100.0
+    t = 2.0
+    U = 1.0
+    L = 1.0
+    rho0 = 1.0
+    c0 = 10.0*U
+    p0 = c0*c0*rho0
+    factor = U*np.exp(decay_rate*t)
+    p_e = factor*factor*(-0.25*(np.cos(4.0*np.pi*x) + np.cos(4.0*np.pi*y)))
+    return p0+p_e
+    
+\end{lstlisting}
+
+\section{Results}
+The evolution of decay of vortex, $L_1$,$L_\infty$ error of velocity field and $L_1$ error of pressure field are shown in the following plots for different cases. \\
+All these plots are part of PySPH outputs.
+\subsection{Cubic Spline Kernel}
+\subsubsection{hdx = 0.5, nx = 25}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case1/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case1/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case1/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case1/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 0.5, nx = 50}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case2/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case2/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case2/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case2/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 0.5, nx = 100}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case3/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case3/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case3/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case3/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 1.0, nx = 25}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case4/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case4/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case4/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case4/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 1.0, nx = 50}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case5/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case5/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case5/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case5/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 1.0, nx = 100}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case6/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case6/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case6/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case6/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 2.0, nx = 25}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case7/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case7/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case7/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case7/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 2.0, nx = 50}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case8/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case8/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case8/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case8/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 2.0, nx = 100}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case9/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case9/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case9/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./Cubicspline/case9/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+
+\subsection{Gaussian Kernel}
+\subsubsection{hdx = 0.5, nx = 25}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case1/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case1/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case1/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case1/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 0.5, nx = 50}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case2/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case2/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case2/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case2/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 0.5, nx = 100}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case3/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case3/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case3/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case3/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 1.0, nx = 25}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case4/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case4/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case4/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case4/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 1.0, nx = 50}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case5/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case5/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case5/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case5/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 1.0, nx = 100}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case6/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case6/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case6/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case6/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 2.0, nx = 25}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case7/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case7/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case7/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case7/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 2.0, nx = 50}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case8/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case8/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case8/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case8/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 2.0, nx = 100}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case9/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case9/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case9/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./gaussian/case9/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsection{Quintic Spline Kernel}
+\subsubsection{hdx = 0.5, nx = 25}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case1/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case1/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case1/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case1/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 0.5, nx = 50}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case2/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case2/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case2/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case2/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 0.5, nx = 100}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case3/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case3/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case3/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case3/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 1.0, nx = 25}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case4/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case4/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case4/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case4/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 1.0, nx = 50}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case5/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case5/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case5/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case5/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 1.0, nx = 100}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case6/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case6/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case6/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case6/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 2.0, nx = 25}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case7/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case7/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case7/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case7/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 2.0, nx = 50}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case8/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case8/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case8/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case8/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 2.0, nx = 100}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case9/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case9/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case9/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./quintic/case9/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsection{WendlandQuintic Spline Kernel}
+\subsubsection{hdx = 0.5, nx = 25}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case1/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case1/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case1/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case1/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 0.5, nx = 50}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case2/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case2/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case2/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case2/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 0.5, nx = 100}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case3/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case3/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case3/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case3/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 1.0, nx = 25}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case4/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case4/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case4/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case4/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 1.0, nx = 50}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case5/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case5/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case5/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case5/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 1.0, nx = 100}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case6/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case6/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case6/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case6/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 2.0, nx = 25}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case7/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case7/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case7/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case7/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 2.0, nx = 50}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case8/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case8/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case8/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case8/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\subsubsection{hdx = 2.0, nx = 100}
+\begin{figure}[H]
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case9/decay.png}
+\caption{Evolution of decay of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case9/l1_error.png}
+\caption{$L_1$ error of velocity field with time}
+\end{subfigure}
+\medskip
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case9/linf_error.png}
+\caption{$L_\infty$ error of velocity field with time}
+\end{subfigure}
+\begin{subfigure}{0.48\textwidth}
+\includegraphics[width = \linewidth]{./WendlandQuintic/case9/p_l1_error.png}
+\caption{$L_1$ error of Pressure Field with time}
+\end{subfigure}
+%\caption{Roll Mode Analysis in Third Iteration}
+\end{figure}
+
+\section{Comparision of Kernels}
+In the following errors in pressure and velocity fields were compared among the kernels at t = 2.0
+\subsection{Pressure Field}
+$L_1$ error in pressure field is compared at t = 2.0 for hdx = 0.5 and nx = 50 case and a bar plot is shown here.
+\begin{figure}[H]
+ \centering
+ \includegraphics[width = \textwidth]{perror.png}
+ \caption{$L_1$ error in pressure for hdx = 0.5 and nx = 50 at t = 2.0}
+\end{figure}
+It shows that Cubicspline and WendlandQuintic spline kernels are comparitively far better than the other two kernels in the calculation of pressure field.
+
+\subsection{Velocity Field}
+\subsubsection{$L_1$ error in Velocity Field}
+$L_1$ error in velocity field is compared at t = 2.0 for hdx = 2.0 and nx = 100 case and a bar plot is shown here.
+\begin{figure}[H]
+ \centering
+ \includegraphics[width = \textwidth]{v1error.png}
+ \caption{$L_1$ error in velocity for hdx = 2.0 and nx = 100 at t = 2.0}
+\end{figure}
+
+\subsubsection{$L_\infty$ error in Velocity Field}
+$L_\infty$ error in velocity field is compared at t = 2.0 for hdx = 2.0 and nx = 100 case and a bar plot is shown here.
+\begin{figure}[H]
+ \centering
+ \includegraphics[width = \textwidth]{vinferror.png}
+ \caption{$L_\infty$ error in velocity for hdx = 2.0 and nx = 100 at t = 2.0}
+\end{figure}
+
+\section{Discussion}
+As from the python code executed to find out the minimum error in $L_1$ error of velocity field, $L_\infty$ error of velocity field, $L_1$ error of Pressure Field at the final time i.e, t = 2.0, the following results were obtained.
+\begin{itemize}
+ \item The case with least $L_1$ error in  pressure is case 2 of Cubic Spline i.e., hdx = 0.5, nx = 50 of the Cubic Spline Kernel case.
+ \item The case with least $L_1$ error in velocity magnitude is case 9 of Gaussian Spline i.e., hdx = 2.0, nx = 100 of the Gaussian Kernel case.
+ \item The case with least $L_\infty$ error in velocity magnitude is case 9 of Quintic Spline i.e., hdx = 2.0, nx = 100 of the Quintic Spline Kernel case.
+\end{itemize}
+
+Also, from the results of PySPH, the following inferences can be brought:
+\begin{itemize}
+ \item The behaviour of velocity and pressure fields are quite different as can be seen from the plots. Hence, we will discuss the results of pressure and velocity fields separately.
+ \item Pressure Field:
+ \begin{itemize}
+  \item When Kernels are compared, only in some cases of Cubicspline and WendlandQuintic Spline Kernels, the error in pressure was converging and in all other cases, the error in pressure was diverging. But as was seen from the output of the python script, it can be noted that the error in Cubicspline Kernel is less than that of the WendlandQuintic Spline Kernel for pressure field.
+  \item When hdx is compared, higher values of hdx caused the error in pressure to blow up and diverge.
+  \item When nx is increased, the errors in pressure decreased but not to significant as can be seen from the output which says that case of nx = 50 had less error than that of nx = 100 showing that the optimal nx for pressure field is somewhere around 50. (We know already that numerical simulations converge with dx decreasing and start diverging again after some dx value if further decreased).
+ \end{itemize}
+ \item Velocity Field:
+ \begin{itemize}
+  \item When Kernels are compared, the results were better with Gaussian and QuinticSpline Kernels. The cases with least errors was observed depending on the type of error analysed but for the same parameters of nx and hdx.
+  \item When hdx was compared, the results were better with hdx = 2.0 which can be explained as the influence of one particle over other increases, the accuracy increased. Hence hdx = 2.0 had the best results in velocity field calculations.
+  \item When nx is increased, the errors decreased showing as dx decreases, but the analysis was not performed for higher values of nx to check the optimal nx after which the results are again diverging.
+ \end{itemize}
+ 
+ From these results, it can be concluded that based on the requirement, it is better to use nx = 100 and hdx = 2.0 for good velocity field, hx = 0.5 for good pressure field, Kernels Cubic Spline for pressure field and either of Gaussian or QuinticSpline Kernels for a better velocity field.
+
+\end{itemize}
+
+
+\begin{thebibliography}{1}
+ \bibitem{wiki} Taylor-Green vortex-Wikepedia \url{https://en.wikipedia.org/wiki/Taylor-Green_vortex}
+\end{thebibliography}
+
+\end{document}
